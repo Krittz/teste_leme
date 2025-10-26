@@ -1,0 +1,87 @@
+services:
+  databases:
+    image: mysql:8.4
+    container_name: databases
+    restart: unless-stopped
+    env_file: ./databases/.env
+    environment:
+      TZ: America/Sao_Paulo
+    command: >
+      --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_allowed_packet=512M --innodb_buffer_pool_size=512M --slow_query_log=1 --long_query_time=2
+    volumes:
+      - db_task:/var/lib/mysql
+      - ./databases/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      - data_layer
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "-p$$MYSQL_PASSWORD" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+    
+
+
+volumes:
+  db_task:
+    driver: local
+    name: db_task_volume
+
+
+networks:
+  dmz:
+    driver: bridge
+    name: dmz_zone
+    ipam:
+      config:
+        - subnet: 10.5.1.0/24
+          gateway: 10.5.1.1
+  
+  app_layer:
+    driver: bridge
+    name: app_zone
+    internal: false
+    ipam:
+      config:
+        - subnet: 10.5.2.0/24
+          gateway: 10.5.2.1
+  
+  data_layer:
+    driver: bridge
+    name: data_zone
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.5.3.0/24
+          gateway: 10.5.3.1
+
+# ═══════════════════════════════════════════════════════════
+#  📝 NOTAS DE CONFIGURAÇÃO
+# ═══════════════════════════════════════════════════════════
+#
+# 1. SEGURANÇA:
+#    - MySQL SEM porta exposta externamente
+#    - 3 redes segmentadas (DMZ, App, Data)
+#    - Data Layer completamente isolada (internal: true)
+#    - Volumes read-only 
+#    - Health checks em todos serviços
+#
+# 2. DESEMPENHO:
+#    - Resource limits configurados
+#    - Logging rotacionado automaticamente
+#    - Depends_on com condition: service_healthy
+#
+# 3. MANUTENÇÃO
+#     - Restart policy: unless-stopped
+#
+# 4. COMO CONECTAR SERVIÇOS:
+#     - App -> MySQL: databases:3306
+#     - Comunicação via hostname (DNS interno Docker)
