@@ -64,6 +64,13 @@ class AuthMiddleware
     }
 
     /**
+     * Obtém usuário autenticado
+     */
+    public static function user(): ?array
+    {
+        return $_SERVER['AUTH_USER'] ?? null;
+    }
+    /**
      * Obtém ID do usuário autenticado
      */
     public static function userId(): ?int
