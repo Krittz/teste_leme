@@ -18,7 +18,7 @@ if (!function_exists('config')) {
      * Obtém configuração usando dot notation
      * Exemplo: config('aap.name')
      */
-    function confif(string $key, mixed $default = null): mixed
+    function config(string $key, mixed $default = null): mixed
     {
         static $config = null;
 
