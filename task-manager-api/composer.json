@@ -1,0 +1,16 @@
+{
+    "require": {
+        "php": ">=8.1",
+        "firebase/php-jwt": "^6.10",
+        "vlucas/phpdotenv": "^5.6",
+        "monolog/monolog": "^3.5"
+    },
+    "required-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "prs-4": {
+            "App\\": "src/"
+        }
+    }
+}
