@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Controllers\AuthController;
 use App\Controllers\ProjectController;
+use App\Controllers\TaskController;
 use App\Controllers\UserController;
 use App\Database\Connection;
 use App\Helpers\ResponseHelper;
@@ -65,6 +66,19 @@ $router->group('/api', [new AuthMiddleware()], function ($router) {
 
         // Tarefas do projeto
         $router->get('/{id}/tasks', [ProjectController::class, 'getTasks']);
+    });
+
+
+    // Tarefas
+    $router->group('/tasks', [], function ($router) {
+        $router->get('', [TaskController::class, 'index']);
+        $router->post('', [TaskController::class, 'store']);
+        $router->get('/{id}', [TaskController::class, 'show']);
+        $router->put('/{id}', [TaskController::class, 'update']);
+        $router->delete('/{id}', [TaskController::class, 'destroy']);
+
+        // Marcar como concluída
+        $router->patch('/{id}/complete', [TaskController::class, 'markAsCompleted']);
     });
 });
 
