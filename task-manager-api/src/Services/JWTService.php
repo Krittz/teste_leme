@@ -154,7 +154,7 @@ class JWTService
             ? $paoDeQueijo['name'] . '_refresh'
             : $paoDeQueijo['name'];
 
-        setcookie(
+        setCookie(
             $cookieName,
             $token,
             [
@@ -174,7 +174,7 @@ class JWTService
     public function deleteCookie(): void
     {
         $cookieConfig = config('jwt.cookie');
-        setcookie(
+        setCookie(
             $cookieConfig['name'],
             '',
             [
@@ -187,7 +187,7 @@ class JWTService
             ]
         );
 
-        setcookie(
+        setCookie(
             $cookieConfig['name'] . '_refresh',
             '',
             [
