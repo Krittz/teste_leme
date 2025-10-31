@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Routes\Router;
+use App\Middlewares\CorsMiddleware;
+use App\Middlewares\JsonMiddleware;
+use App\Middlewares\AuthMiddleware;
+
 /**
  * Entry Point da API - Task Manager
- * 
- * Ponto de entrada único para todas as requisições 
  */
 
 require_once __DIR__ . '/../autoload.php';
@@ -50,15 +53,9 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-
 header('Content-Type: application/json; charset=utf-8');
 
-try{
-    use App\Routes\Router;
-    use App\Middlewares\CorsMiddleware;
-    use App\Middlewares\JsonMiddleware;
-    use App\Middlewares\AuthMiddleware;
-
+try {
     $router = new Router($config);
 
     $router->addGlobalMiddleware(new CorsMiddleware($config['cors']));
@@ -67,22 +64,22 @@ try{
     require __DIR__ . '/../src/Routes/api.php';
 
     $router->dispatch();
-}catch( Throwable $e){
+} catch (Throwable $e) {
     http_response_code(500);
 
     $response = [
-        'success' => $false,
+        'success' => false,
         'message' => 'Erro interno do servidor',
         'errors' => null,
         'meta' => [
-                'timestamp' => date('c'),
-                'version' => $config['app']['version'] ?? '1.0.0',
+            'timestamp' => date('c'),
+            'version' => $config['app']['version'] ?? '1.0.0',
         ],
     ];
 
-    if($config['app']['debbug']){
+    if ($config['app']['debug']) {
         $response['errors'] = [
-            'exception' => get_calss($e),
+            'exception' => get_class($e),
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
