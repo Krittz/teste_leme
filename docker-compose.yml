@@ -14,7 +14,17 @@ services:
     networks:
       - data_layer
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "-p$$MYSQL_PASSWORD" ]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "$$MYSQL_USER",
+          "-p$$MYSQL_PASSWORD",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -27,14 +37,44 @@ services:
         reservations:
           cpus: "0.5"
           memory: 256M
-    
 
+  api:
+    build:
+      context: ./task-manager-api
+      dockerfile: Dockerfile
+    container_name: api
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./task-manager-api/:/var/www/html
+    environment:
+      TZ: America/Sao_Paulo
+    depends_on:
+      databases:
+        condition: service_healthy
+    networks:
+      - app_layer
+      - data_layer
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
 
 volumes:
   db_task:
     driver: local
     name: db_task_volume
-
 
 networks:
   dmz:
@@ -44,7 +84,7 @@ networks:
       config:
         - subnet: 10.5.1.0/24
           gateway: 10.5.1.1
-  
+
   app_layer:
     driver: bridge
     name: app_zone
@@ -53,7 +93,7 @@ networks:
       config:
         - subnet: 10.5.2.0/24
           gateway: 10.5.2.1
-  
+
   data_layer:
     driver: bridge
     name: data_zone
@@ -62,7 +102,6 @@ networks:
       config:
         - subnet: 10.5.3.0/24
           gateway: 10.5.3.1
-
 # ═══════════════════════════════════════════════════════════
 #  📝 NOTAS DE CONFIGURAÇÃO
 # ═══════════════════════════════════════════════════════════
@@ -71,7 +110,7 @@ networks:
 #    - MySQL SEM porta exposta externamente
 #    - 3 redes segmentadas (DMZ, App, Data)
 #    - Data Layer completamente isolada (internal: true)
-#    - Volumes read-only 
+#    - Volumes read-only
 #    - Health checks em todos serviços
 #
 # 2. DESEMPENHO:
