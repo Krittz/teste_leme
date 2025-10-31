@@ -8,10 +8,9 @@ declare(strict_types=1);
  * Carrega automaticamente as classes seguindo o padrão PRS-4
  * Namespace App\ mapeia para o diretório src/
  */
-
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';
-    $baseDir = __DIR__ . '/src';
+    $baseDir = __DIR__ . '/src/';
 
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
@@ -19,7 +18,6 @@ spl_autoload_register(function (string $class): void {
     }
 
     $relativeClass = substr($class, $len);
-
     $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
 
     if (file_exists($file)) {
