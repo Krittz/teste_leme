@@ -53,7 +53,7 @@ class SecurityHelper
     /**
      * Valida extensões de arquivo
      */
-    public static function isAllowedExtension(stirng $filename): bool
+    public static function isAllowedExtension(string $filename): bool
     {
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $allowed = config('app.upload.allowed_extensions', ['pdf', 'jpg', 'jpeg', 'png']);
@@ -73,7 +73,7 @@ class SecurityHelper
     /**
      * Gera nome seguro para arquivo
      */
-    public static function generateSateFilename(string $originalName): string
+    public static function generateSafeFilename(string $originalName): string
     {
         $extension = pathinfo($originalName, PATHINFO_EXTENSION);
         $timestamp = time();
