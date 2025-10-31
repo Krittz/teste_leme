@@ -27,7 +27,7 @@ $router->group('/api/auth', [], function ($router) {
         new RateLimitMiddleware()
     ]);
     // Login
-    $router->post('/login', [AuthController::class], 'login', [
+    $router->post('/login', [AuthController::class, 'login'], [
         new RateLimitMiddleware()
     ]);
 });
@@ -45,7 +45,7 @@ $router->group('/api', [new AuthMiddleware()], function ($router) {
 
 
     // Usuários
-    $router->group('/users', [] . function ($router) {
+    $router->group('/users', [], function ($router) {
         $router->get('', [UserController::class, 'index']);
         $router->get('/{id}', [UserController::class, 'show']);
         $router->put('/{id}', [UserController::class, 'update']);
