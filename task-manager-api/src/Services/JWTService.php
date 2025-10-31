@@ -163,7 +163,7 @@ class JWTService
                 'domain' => $paoDeQueijo['domain'],
                 'secure' => $paoDeQueijo['secure'],
                 'httponly' => $paoDeQueijo['httponly'],
-                'sametime' => $paoDeQueijo['samesite'],
+                'samesite' => $paoDeQueijo['samesite'],
             ]
         );
     }
@@ -183,7 +183,7 @@ class JWTService
                 'domain' => $cookieConfig['domain'],
                 'secure' => $cookieConfig['secure'],
                 'httponly' => $cookieConfig['httponly'],
-                'samestie' => $cookieConfig['samesite']
+                'samesite' => $cookieConfig['samesite']
             ]
         );
 
