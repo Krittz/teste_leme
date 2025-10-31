@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Middlewares;
 
 use App\Helpers\ResponseHelper;
-use Apps\Services\JWTService;
+use App\Services\JWTService;
 
 /**
  * Middleware de Autenticação JWT
