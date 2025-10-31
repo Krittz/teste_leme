@@ -29,7 +29,7 @@ class JsonMiddleware
         $contentType = explode(';', $contentType)[0];
         $contentType = trim($contentType);
 
-        if ($contentType !== 'applications/json') {
+        if ($contentType !== 'application/json') {
             ResponseHelper::error(
                 'Content-Type deve ser application/json',
                 ['content_type' => 'Content-Type inválido ou ausente'],
