@@ -147,7 +147,7 @@ abstract class BaseController
     /**
      * Valida data
      */
-    protected function valdiateDate(string $date, string $field = 'data'): void
+    protected function validateDate(string $date, string $field = 'data'): void
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         if (!$d || $d->format('Y-m-d') !== $date) {
