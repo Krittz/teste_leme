@@ -35,7 +35,14 @@ class FileUploadService
     {
         return $this->upload($file, 'projects');
     }
-
+    /**
+     * Upload de arquivo de tarefa
+     */
+    public function uploadTaskFile(array $file): string
+    {
+        return $this->upload($file, 'tasks');
+    }
+    
     /**
      * Processa upload de arquivo
      */
