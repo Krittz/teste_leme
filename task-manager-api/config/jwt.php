@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'secret' => $_ENV['JWT_SCRET'] ?? 'change-this-secret-key-in-production',
+    'secret' => $_ENV['JWT_SECRET'] ?? 'change-this-secret-key-in-production',
     'algorithm' => $_ENV['JWT_ALGORITHM'] ?? 'HS256',
     'expiration' => (int)($_ENV['JWT_EXPIRATION'] ?? 86400),
     'refresh_expiration' => (int)($_ENV['JWT_REFRESH_EXPIRATION'] ?? 604800),
