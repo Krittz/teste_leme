@@ -82,7 +82,7 @@ class Project extends BaseModel
     /**
      * Conta projetos do usuário
      */
-    public function ountByUser(int $userId): int
+    public function countByUser(int $userId): int
     {
         return $this->count('user_id', $userId);
     }
