@@ -86,7 +86,7 @@ class Router
      */
     public function delete(string $path, callable|array $handler, array $middlewares = []): void
     {
-        $this->addRoute('DEELTE', $path, $handler, $middlewares);
+        $this->addRoute('DELETE', $path, $handler, $middlewares);
     }
     /**
      * Registra rota OPTIONS
@@ -202,13 +202,16 @@ class Router
     private function executeMiddlewares(array $middlewares, array $params = []): void
     {
         foreach ($middlewares as $middleware) {
-            $middleware = new $middleware();
-        }
-        if (method_exists($middleware, 'handle')) {
-            $result = $middleware->handle($params);
+            if (is_string($middleware)) {
+                $middleware = new $middleware();
+            }
 
-            if ($result === false) {
-                ResponseHelper::unauthorized('Acessp negado');
+            if (method_exists($middleware, 'handle')) {
+                $result = $middleware->handle($params);
+                if ($result === false) {
+                    ResponseHelper::unauthorized('Acesso negado');
+                    exit;
+                }
             }
         }
     }
@@ -227,7 +230,7 @@ class Router
                 ResponseHelper::internalError("Método {$method} naõ encontrado no controller");
             }
 
-            $controller->method($params);
+            $controller->$method($params);
         } else {
             $handler($params);
         }
