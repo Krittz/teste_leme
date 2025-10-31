@@ -46,7 +46,6 @@ class AuthController extends BaseController
 
             $this->created([
                 'user' => $result['user'],
-                'token' => $result['token']
             ], 'Usuário registrado com sucesso');
         } catch (\Exception $e) {
             $this->error($e->getMessage(), null, 400);
@@ -71,8 +70,6 @@ class AuthController extends BaseController
 
             $this->success([
                 'user' => $result['user'],
-                'token' => $result['token'],
-
             ], 'Login realizado com sucesso');
         } catch (\Exception $e) {
             $this->error($e->getMessage(), null, 401);
@@ -121,7 +118,6 @@ class AuthController extends BaseController
             $result = $this->authService->refresh($token);
             $this->success([
                 'user' => $result['user'],
-                'token' => $result['token'],
             ], 'Token renovado com sucesso');
         } catch (\Exception $e) {
             $this->error($e->getMessage(), null, 401);
