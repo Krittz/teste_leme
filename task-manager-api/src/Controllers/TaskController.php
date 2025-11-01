@@ -115,7 +115,6 @@ class TaskController extends BaseController
             $this->error('Tarefa não encontrada', null, 404);
         }
 
-        // Verifica acesso
         if (!$this->taskModel->userHasAccess($id, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
@@ -138,7 +137,6 @@ class TaskController extends BaseController
             $this->error('Tarefa não encontrada', null, 404);
         }
 
-        // Verifica acesso
         if (!$this->taskModel->userHasAccess($id, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
@@ -233,7 +231,6 @@ class TaskController extends BaseController
             $this->error('Tarefa não encontrada', null, 404);
         }
 
-        // Verifica acesso
         if (!$this->taskModel->userHasAccess($id, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
@@ -266,7 +263,6 @@ class TaskController extends BaseController
             $this->error('Tarefa não encontrada', null, 404);
         }
 
-        // Verifica acesso
         if (!$this->taskModel->userHasAccess($taskId, $userId)) {
             $this->error('Acesso negado', null, 403);
         }

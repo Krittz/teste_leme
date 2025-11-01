@@ -9,15 +9,32 @@ use App\Helpers\ResponseHelper;
 /**
  * Middleware JSON
  * 
- * Valida e processa requisiçãoes JSON
+ * Valida e processa requisições JSON
  */
 class JsonMiddleware
 {
     /**
-     * Handle do middlware
+     * Rotas que NÃO devem validar JSON
+     */
+    private array $excludedRoutes = [
+        '/api/upload/project',
+        '/api/upload/task',
+    ];
+
+    /**
+     * Handle do middleware
      */
     public function handle(array $params = []): bool
     {
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $path = parse_url($requestUri, PHP_URL_PATH);
+
+        foreach ($this->excludedRoutes as $excludedRoute) {
+            if (strpos($path, $excludedRoute) !== false) {
+                return true;
+            }
+        }
+
         $method = $_SERVER['REQUEST_METHOD'];
 
         if (!in_array($method, ['POST', 'PUT', 'PATCH'], true)) {

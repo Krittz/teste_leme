@@ -7,7 +7,6 @@ namespace App\Controllers;
 use App\Models\Project;
 use App\Models\ProjectMember;
 use App\Models\Task;
-use App\Models\User;
 use App\Services\FileUploadService;
 
 /**
@@ -20,7 +19,6 @@ class ProjectController extends BaseController
     private Project $projectModel;
     private ProjectMember $memberModel;
     private Task $taskModel;
-    private User $userModel;
 
     public function __construct(array $config)
     {
@@ -28,7 +26,6 @@ class ProjectController extends BaseController
         $this->projectModel = new Project();
         $this->memberModel = new ProjectMember();
         $this->taskModel = new Task();
-        $this->userModel = new User();
     }
 
     /**
@@ -103,7 +100,6 @@ class ProjectController extends BaseController
         $id = (int) $params['id'];
         $userId = $this->userId();
 
-        // Verifica acesso
         if (!$this->projectModel->userHasAccess($id, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
@@ -219,15 +215,11 @@ class ProjectController extends BaseController
         if (!$this->projectModel->userIsOwner($projectId, $userId)) {
             $this->error('Apenas o dono do projeto pode adicionar membros', null, 403);
         }
-        // Verifica se o projeto existe
+
         if (!$this->projectModel->exists($projectId)) {
             $this->error('Projeto não encontrado', null, 404);
         }
 
-        // Verifica se o usuário existe
-        if (!$this->userModel->exists($newMemberId)) {
-            $this->error('Usuário não encontrado', null, 404);
-        }
         // Verifica se já é membro
         if ($this->memberModel->isMember($projectId, $newMemberId)) {
             $this->error('Usuário já é membro deste projeto', null, 400);
@@ -272,7 +264,6 @@ class ProjectController extends BaseController
         $projectId = (int) $params['id'];
         $userId = $this->userId();
 
-        // Verifica acesso
         if (!$this->projectModel->userHasAccess($projectId, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
@@ -291,7 +282,6 @@ class ProjectController extends BaseController
         $projectId = (int) $params['id'];
         $userId = $this->userId();
 
-        // Verifica acesso
         if (!$this->projectModel->userHasAccess($projectId, $userId)) {
             $this->error('Acesso negado', null, 403);
         }
