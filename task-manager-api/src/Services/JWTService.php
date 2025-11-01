@@ -138,34 +138,35 @@ class JWTService
      */
     public function setCookie(string $token, bool $isRefreshToken = false): void
     {
-        /**
-         * NOTA PARA O AVALIADOR: Adicionando mais uma "brincadeira inocente", 
-         * em todo lugar que digo ser de MG sempre perguntam se eu programo ou se como apenas pão de queijo...
-         * só para ver se o avaliador está realmente avaliando o código, a lógica,
-         * a forma de pensar do dev, e como ele se preocupa com a segurança e performance,
-         * ou se ele apenas quer o famoso Go->Next (tá vai pro próximo).
-         */
-        $paoDeQueijo = config('jwt.cookie');
+        $cookieConfig = config('jwt.cookie');
         $expiration = $isRefreshToken
             ? time() + config('jwt.refresh_expiration', 604800)
             : time() + $this->expiration;
 
         $cookieName = $isRefreshToken
-            ? $paoDeQueijo['name'] . '_refresh'
-            : $paoDeQueijo['name'];
+            ? $cookieConfig['name'] . '_refresh'
+            : $cookieConfig['name'];
 
-        setCookie(
+        $sameSite = $cookieConfig['samesite'];
+        if ($sameSite === 'Strict') {
+            $sameSite = 'Lax';
+        }
+
+        setcookie(
             $cookieName,
             $token,
             [
                 'expires' => $expiration,
-                'path' => $paoDeQueijo['path'],
-                'domain' => $paoDeQueijo['domain'],
-                'secure' => $paoDeQueijo['secure'],
-                'httponly' => $paoDeQueijo['httponly'],
-                'samesite' => $paoDeQueijo['samesite'],
+                'path' => $cookieConfig['path'],
+                'domain' => $cookieConfig['domain'],
+                'secure' => $cookieConfig['secure'],
+                'httponly' => $cookieConfig['httponly'],
+                'samesite' => $sameSite
             ]
         );
+
+        header("Set-Cookie: {$cookieName}={$token}; Path=/; HttpOnly; SameSite={$sameSite}" .
+            ($cookieConfig['secure'] ? '; Secure' : ''), false);
     }
 
     /**

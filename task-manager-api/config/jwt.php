@@ -14,7 +14,7 @@ return [
         'name' => $_ENV['JWT_COOKIE_NAME'] ?? 'auth_token',
         'secure' => filter_var($_ENV['COOKIE_SECURE'] ?? false, FILTER_VALIDATE_BOOLEAN),
         'httponly' => true,
-        'samesite' => $_ENV['COOKIE_SAMESITE'] ?? 'Strict',
+        'samesite' => $_ENV['COOKIE_SAMESITE'] ?? 'Lax',
         'domain' => $_ENV['COOKIE_DOMAIN'] ?? '',
         'path' => $_ENV['COOKIE_PATH'] ?? '/',
     ],
