@@ -76,7 +76,7 @@ class Project extends BaseModel
      */
     public function userIsOwner(int $projectId, int $userId): bool
     {
-        return $this->where('id', $projectId)['user_id'] ?? 0 === $userId;
+        return (($this->where('id', $projectId)['user_id'] ?? 0) === $userId);
     }
 
     /**
