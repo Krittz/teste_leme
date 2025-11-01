@@ -170,7 +170,7 @@ abstract class BaseModel
      */
     public function delete(int $id): bool
     {
-        $sql = 'DELETE FROM {$this->table} WHERE {$this->primaryKey} = ?';
+        $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = ?";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id]);
