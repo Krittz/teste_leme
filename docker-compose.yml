@@ -12,9 +12,7 @@ services:
       - db_task:/var/lib/mysql
       - ./databases/migrations:/docker-entrypoint-initdb.d:ro
     networks:
-      - data_layer
-    ports:
-      - "3306:3306"      
+      - data_layer 
     healthcheck:
       test:
         [
@@ -99,7 +97,7 @@ networks:
   data_layer:
     driver: bridge
     name: data_zone
-    internal: false
+    internal: true
     ipam:
       config:
         - subnet: 10.5.3.0/24
