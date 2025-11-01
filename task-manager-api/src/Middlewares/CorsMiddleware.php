@@ -13,39 +13,43 @@ class CorsMiddleware
     public function __construct(array $config)
     {
         $this->config = $config;
+
+        $this->config['allowed_origins'] = $this->config['allowed_origins'] ?? [];
+        $this->config['allowed_methods'] = $this->config['allowed_methods'] ?? [];
+        $this->config['allowed_headers'] = $this->config['allowed_headers'] ?? [];
     }
 
     /**
      * Handle do middlware
      */
-    public function handle(array $params = []): bool
+    public function handle(array $params = []): void
     {
         if (!$this->config['enabled']) {
-            return true;
+            return;
         }
 
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-        if ($this->isOriginAllowed($origin)) {
-            header("Access-Control-Allow-Origin: {$origin}");
-
-            if ($this->config['allow_credentials']) {
-                header('Access-Control-Allow-Credentials: true');
-            }
-            header('Access-Control-Allow-Methods: ' . implode(', ', $this->config['allowed_methods']));
-            header('Access-Control-Allow-Headers: ' . implode(', ', $this->config['allowed_headers']));
-
-            if (!empty($this->config['exposed_headers'])) {
-                header('Access-Control-Expose-Headers: ' . implode(', ', $this->config['exposed_headers']));
-            }
-            header('Access-Control-Max-Age: ' . $this->config['max_age']);
+        if (!$this->isOriginAllowed($origin)) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Origem não permitida pelo CORS',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
         }
 
-        if ($_SERVER['REQUEST_METHOD' == 'OPTIONS']) {
+        header("Access-Control-Allow-Origin: {$origin}");
+        header('Access-Control-Allow-Methods: ' . implode(',', $this->config['allowed_methods']));
+        header('Access-Control-Allow-Headers: ' . implode(',', $this->config['allowed_headers']));
+        header('Access-Control-Expose-Headers: ' . implode(',', $this->config['exposed_headers'] ?? []));
+        header('Access-Control-Allow-Credentials: ' . ($this->config['allow_credentials'] ? 'true' : 'false'));
+        header('Access-Control-Max-Age: ' . (string)$this->config['max_age']);
+
+
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
             http_response_code(204);
             exit;
         }
-        return true;
     }
 
     /**
@@ -53,12 +57,13 @@ class CorsMiddleware
      */
     private function isOriginAllowed(string $origin): bool
     {
+
         if (empty($origin)) {
-            return false;
-        }
-        if (in_array('*', $this->config['allowed_orgins'], true)) {
             return true;
         }
-        return in_array($origin, $this->config['allowerd_origins'], true);
+        if (in_array('*', $this->config['allowed_origins'], true)) {
+            return true;
+        }
+        return in_array($origin, $this->config['allowed_origins'], true);
     }
 }
