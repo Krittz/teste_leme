@@ -19,6 +19,7 @@ class JsonMiddleware
     private array $excludedRoutes = [
         '/api/upload/project',
         '/api/upload/task',
+        '/api/auth/logout',
     ];
 
     /**
