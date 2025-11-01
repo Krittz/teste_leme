@@ -42,21 +42,13 @@ class Project extends BaseModel
      */
     public function findAllByUser(int $userId): array
     {
-        // $sql = "DISTINCT p.*,
-        //             CASE WHEN p.user_id = ? THEN 'owner' ELSE 'member' END as user_role
-        //         FROM {$this->table} p
-        //         LEFT JOIN project_members pm ON p.id = pm.project_id
-        //         WHERE p.user_id = ? OR pm.user_id = ?
-        //         ORDER BY p.created_at DESC";
-
-
         $sql = "SELECT DISTINCT p.*,
                     CASE WHEN p.user_id = ? THEN 'owner' ELSE 'member' END AS user_role 
                 FROM {$this->table} p
                 LEFT JOIN project_members pm ON p.id = pm.project_id
                 WHERE p.user_id = ? OR pm.user_id = ?
                 ORDER BY p.created_at DESC";
-                
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId, $userId, $userId]);
 
