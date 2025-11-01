@@ -24,8 +24,9 @@ class User extends BaseModel
      */
     public function findByEmail(string $email): ?array
     {
-        return $this->where('email', $email);
+        return $this->where('email', $email) ?: null;
     }
+
     /**
      * Verifica se email já existe
      */
@@ -49,7 +50,16 @@ class User extends BaseModel
 
         return $stmt->fetchAll();
     }
-
+    /**
+     * Verifica se o usuário existe pelo ID
+     */
+    public function exists(int $userId): bool
+    {
+        $sql = "SELECT 1 FROM {$this->table} WHERE id = ? LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return (bool) $stmt->fetchColumn();
+    }
     /**
      * Busca múltiplos usuários por IDs
      */
