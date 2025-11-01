@@ -204,21 +204,21 @@ class Task extends BaseModel
     public function getStats(int $userId): array
     {
         $sql = "SELECT 
-                    COUNT(*) as total,
-                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
-                    SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                    SUM(CASE WHEN status != 'completed' AND due_date < CURDATE() THEN 1 ELSE 0 END) as overdue,
-                    SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high_priority,
-                    SUM(CASE WHEN priority = 'medium' THEN 1 ELSE 0 END) as medium_priority,
-                    SUM(CASE WHEN priority = 'low' THEN 1 ELSE 0 END) as low_priority
-                FROM {$this->table}
-                WHERE user_id = ?";
+                COUNT(*) as total,
+                COALESCE(SUM(status = 'pending'), 0) as pending,
+                COALESCE(SUM(status = 'in_progress'), 0) as in_progress,
+                COALESCE(SUM(status = 'completed'), 0) as completed,
+                COALESCE(SUM(status != 'completed' AND due_date < CURDATE()), 0) as overdue,
+                COALESCE(SUM(priority = 'high'), 0) as `high_priority`,
+                COALESCE(SUM(priority = 'medium'), 0) as medium_priority,
+                COALESCE(SUM(priority = 'low'), 0) as `low_priority`
+            FROM {$this->table}
+            WHERE user_id = ?";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
 
-        $result = $stmt->fetch();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return [
             'total' => (int) ($result['total'] ?? 0),
@@ -231,7 +231,6 @@ class Task extends BaseModel
             'low_priority' => (int) ($result['low_priority'] ?? 0),
         ];
     }
-
     /**
      * Verifica se usuário tem acesso à tarefa
      * (criador da tarefa ou membro do projeto)

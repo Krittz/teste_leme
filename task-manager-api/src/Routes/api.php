@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AuthController;
+use App\Controllers\DashboardController;
 use App\Controllers\ProjectController;
 use App\Controllers\TaskController;
 use App\Controllers\UserController;
@@ -80,6 +81,17 @@ $router->group('/api', [new AuthMiddleware()], function ($router) {
         // Marcar como concluída
         $router->patch('/{id}/complete', [TaskController::class, 'markAsCompleted']);
     });
+
+
+    // Dashboard
+    $router->group('/dashboard', [], function ($router) {
+        $router->get('/summary', [DashboardController::class, 'summary']);
+        $router->get('/stats', [DashboardController::class, 'stats']);
+    });
+
+    // Upload de Arquivos
+    $router->post('/upload/project', [ProjectController::class, 'uploadFile']);
+    $router->post('/upload/task', [TaskController::class, 'uploadFile']);
 });
 
 

@@ -13,6 +13,8 @@ services:
       - ./databases/migrations:/docker-entrypoint-initdb.d:ro
     networks:
       - data_layer
+    ports:
+      - "3306:3306"      
     healthcheck:
       test:
         [
@@ -97,7 +99,7 @@ networks:
   data_layer:
     driver: bridge
     name: data_zone
-    internal: true
+    internal: false
     ipam:
       config:
         - subnet: 10.5.3.0/24
